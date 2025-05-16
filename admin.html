@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12.5px;
+            font-size: 20px;
+            position: relative;
+            text-align: center;
+            font-size: 30px;
+            font-weight: bold;
+        }
+        .home-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: 1px solid #4CAF50;
+            padding: 5px 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            border-radius: 10px;
+        }
+
+        .home-button:hover {
+            background-color: #4CAF50;
+        }
+        .container {
+            max-width: 400px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        label {
+            font-weight: bold;
+        }
+        input {
+            width: 94%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 5px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="login.html" class="home-button">Home</a>
+        Admin Page
+    </div>
+    
+    <!-- Admin Login Form -->
+    <div class="container" id="admin-login-container">
+        <h2>Admin Login</h2>
+        <form id="admin-login-form" onsubmit="adminLogin(event)">
+            <div class="form-group">
+                <label for="admin-username">Username:</label>
+                <input type="text" id="admin-username" name="admin-username" required>
+            </div>
+            <div class="form-group">
+                <label for="admin-password">Password:</label>
+                <input type="password" id="admin-password" name="admin-password" required>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+    
+    <div class="footer">
+        <p>&copy; 2025 Improving the lives of indebted farmers. All rights reserved.</p>
+    </div>
+
+    <script>
+        function adminLogin(event) {
+            event.preventDefault();
+
+            var username = document.getElementById("admin-username").value.trim();
+            var password = document.getElementById("admin-password").value.trim();
+
+            if (username === "admin" && password === "admin") {
+                alert("Login Successful! Redirecting to Admin Dashboard...");
+                window.location.href = "admin-dashboard.html";
+            } else {
+                alert("Invalid username or password! Please try again.");
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activated Farmers</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 0.5px;
+            text-align: center;
+        }
+        .home-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: 1px solid #4CAF50;
+            padding: 5px 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            border-radius: 3px; /* Slightly rounded edges instead of a full circle */
+        }
+        
+        .home-button:hover {
+            background-color: #4CAF50;
+        }
+
+        table {
+            width: 80%;
+            margin: 30px auto;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+        .header h1{
+            font-size: 34px;
+            margin: 10px 0
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="login.html" class="home-button">Home</a>
+        <h1>Activated Farmers</h1>
+    </div>
+
+    <h2 style="text-align:center;">Farmers List</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>State</th>
+            </tr>
+        </thead>
+        <tbody id="activated-farmers-body">
+            <!-- Activated Farmers will be populated here -->
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <p>&copy; 2025 Improving the lives of indebted farmers. All rights reserved.</p>
+    </div>
+
+    <script>
+        function loadActivatedFarmers() {
+            const activatedUsers = JSON.parse(localStorage.getItem("activatedUsers")) || [];
+            const farmerTableBody = document.getElementById("activated-farmers-body");
+            farmerTableBody.innerHTML = "";
+
+            activatedUsers.forEach(user => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>${user.phone}</td>
+                    <td>${user.state}</td>
+                `;
+                farmerTableBody.appendChild(row);
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", loadActivatedFarmers);
+    </script>
+
+</body>
+</html>

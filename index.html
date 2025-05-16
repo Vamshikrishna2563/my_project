@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 25px; /* Reduce font size */
+            margin: 5px 0; /* Adjust spacing */
+        }
+
+        .back-button {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            background-color: #4CAF50;
+            color: #ffffff;
+            border: 2px solid #4CAF50;
+            padding: 8px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .back-button:hover {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        #cameraFeed {
+            width: 100%;
+            max-width: 640px;
+            height: auto;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+        }
+
+        #captureButton {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+        #captureButton:hover {
+            background-color: #367c39;
+        }
+
+        #results {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #555;
+        }
+
+        .container {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-button" onclick="goBack()">← Back</button>
+        <h1>Prediction</h1>
+    </div>
+
+    <div class="container">
+        <video id="cameraFeed" autoplay></video>
+        <canvas id="canvas" style="display: none;"></canvas>
+        <button id="captureButton">Capture Image</button>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+
+        const video = document.getElementById('cameraFeed');
+        const canvas = document.getElementById('canvas');
+        const captureButton = document.getElementById('captureButton');
+        const resultsDiv = document.getElementById('results');
+        const context = canvas.getContext('2d');
+
+        // Ensure the video stream is stopped when the page unloads.
+        window.addEventListener('beforeunload', () => {
+            if (video.srcObject) {
+                video.srcObject.getTracks().forEach(track => track.stop());
+            }
+        });
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+                video.onloadedmetadata = () => {
+                    video.play();
+                };
+            })
+            .catch(error => {
+                console.error('Error accessing camera:', error);
+                resultsDiv.innerHTML = `<p style="color:red;">Error accessing camera: ${error.message}</p>`;
+            });
+
+        captureButton.addEventListener('click', () => {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageDataURL = canvas.toDataURL('image/jpeg');
+            processImage(imageDataURL);
+        });
+
+        async function processImage(imageDataURL) {
+            try {
+                resultsDiv.innerHTML = '<p>Processing image...</p>';
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ image: imageDataURL }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                displayResults(data);
+            } catch (error) {
+                console.error('Error processing image:', error);
+                resultsDiv.innerHTML = `<p style="color:red;">Error processing image: ${error.message}</p>`;
+            }
+        }
+
+        function displayResults(data) {
+            if (data.error) {
+                resultsDiv.innerHTML = `<p style="color:red;">${data.error}</p>`;
+            } else {
+                resultsDiv.innerHTML = `
+                    <p>Predicted Crop: <span style="font-weight:bold;">${data.crop}</span></p>
+                    <p>Soil Type: <span style="font-weight:bold;">${data.soil}</span></p>
+                    <p>Weather: <span style="font-weight:bold;">${data.weather}</span></p>
+                `;
+            }
+        }
+    </script>
+
+    <div class="footer">
+        <p>&copy; 2025 Improving the lives of indebted farmers. All rights reserved.</p>
+    </div>
+</body>
+</html>

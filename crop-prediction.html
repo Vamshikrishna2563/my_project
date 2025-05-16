@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px; /* Reduce padding for a smaller height */
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 25px; /* Reduce font size */
+            margin: 5px 0; /* Adjust spacing */
+        }
+        .top-buttons {
+            position: absolute;
+            left: 10px;
+            top: 5px;
+        }
+        .menu-button, .register-button {
+            background-color: #4CAF50;
+            color: #ffffff;
+            border: 2px solid #4CAF50;
+            padding: 8px 15px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .menu-button:hover, .register-button:hover {
+            background-color: #4CAF50;
+            color: white;
+        }
+        /* Sidebar */
+        .sidebar {
+            height: 100%;
+            width: 200px;
+            position: fixed;
+            top: 0;
+            left: -200px;
+            background-color: #333;
+            overflow-x: hidden;
+            transition: 0.3s;
+            padding-top: 40px;
+        }
+        .sidebar a {
+            padding: 10px;
+            text-decoration: none;
+            font-size: 14px;
+            color: white;
+            display: block;
+            transition: 0.2s;
+        }
+        .sidebar a:hover {
+            background-color: #4CAF50;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 95.5%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        select {
+            width: 99%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 99%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="top-buttons">
+            <button class="menu-button" onclick="openMenu()">☰</button>
+        </div>
+        <h1>Crop Prediction</h1></div>
+    </div>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar">
+        <span class="close-btn" onclick="closeMenu()">×</span>
+        <a href="login.html" onclick="showLoginForm()">Home</a>
+        <a href="crop-price-info.html">Crop Price</a>
+        <a href="index.html">Prediction</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+    </div>
+
+    <div class="container">
+        <h2>Enter Details for Crop Prediction</h2>
+
+        <form id="crop-prediction-form">
+            <div class="form-group">
+                <label for="soil-type">Soil Type:</label>
+                <select id="soil-type" name="soil-type">
+                    <option value="loamy">Loamy</option>
+                    <option value="clayey">Clayey</option>
+                    <option value="sandy">Sandy</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="rainfall">Average Rainfall (cm/month):</label>
+                <input type="number" id="rainfall" name="rainfall" required>
+            </div>
+
+            <div class="form-group">
+                <label for="temperature">Average Temperature (°C):</label>
+                <input type="number" id="temperature" name="temperature" required>
+            </div>
+
+            <button type="submit">Predict Crop</button>
+        </form>
+
+        <div id="prediction-result" class="form-footer"></div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2025 Improving the lives of indebted farmers. All rights reserved.</p>
+    </div>
+
+    <script>
+        function openMenu() {
+            document.getElementById("sidebar").style.left = "0";
+        }
+
+        function closeMenu() {
+            document.getElementById("sidebar").style.left = "-200px";
+        }
+
+            document.getElementById('crop-prediction-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const soilType = document.getElementById('soil-type').value;
+            const rainfallInCm = parseFloat(document.getElementById('rainfall').value);
+            const temperature = parseFloat(document.getElementById('temperature').value);
+
+        if (isNaN(rainfallInCm) || isNaN(temperature)) {
+            document.getElementById('prediction-result').innerText = "Please enter valid values.";
+            return;
+        }
+
+        let predictedCrop = '';
+
+        // **Crop prediction logic**
+        if (soilType === 'loamy' && rainfallInCm >= 150 && rainfallInCm <= 250 && temperature >= 15 && temperature <= 28) {
+            predictedCrop = 'Coffee';
+        } else if (soilType === 'loamy' && rainfallInCm >= 150 && rainfallInCm <= 300 && temperature >= 20 && temperature <= 30) {
+            predictedCrop = 'Tea';
+        } else if (soilType === 'loamy' && rainfallInCm > 75 && rainfallInCm <= 100 && temperature >= 21 && temperature <= 26) {
+            predictedCrop = 'Wheat';
+        } else if (soilType === 'loamy' && rainfallInCm >= 50 && rainfallInCm <= 100 && temperature >= 27 && temperature <= 32) {
+            predictedCrop = 'Millets';
+        } else if (soilType === 'loamy' && rainfallInCm >= 40 && rainfallInCm <= 45 && temperature >= 20 && temperature <= 25) {
+            predictedCrop = 'Grams';
+        } else if (soilType === 'loamy' && rainfallInCm > 150 && temperature >= 22 && temperature <= 32) {
+            predictedCrop = 'Rice';
+        } else if (soilType === 'sandy' && rainfallInCm >= 50 && rainfallInCm <= 75 && temperature >= 21 && temperature <= 30) {
+            predictedCrop = 'Cotton';
+        } else if (soilType === 'sandy' && rainfallInCm >= 50 && rainfallInCm <= 75 && temperature >= 20 && temperature <= 30) {
+            predictedCrop = 'Oilseeds';
+        }  else if (soilType === 'clayey' && rainfallInCm >= 75 && rainfallInCm <= 150 && temperature >= 21 && temperature <= 27) {
+            predictedCrop = 'Sugar Cane';
+        } else {
+            predictedCrop = 'No suitable crop found for these conditions';
+        }
+
+        document.getElementById('prediction-result').innerText = `Predicted Crop: ${predictedCrop}`;
+    });
+    </script>
+</body>

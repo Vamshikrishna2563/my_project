@@ -1,0 +1,35 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "farmer registration", "farmer registration.csproj", "{2BEAD406-2235-9E1A-3072-2FDD5C3DD0A8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ImageProcessingApp", "ImageProcessingApp", "{295B2A7C-F649-11FD-8C4E-BDFFD1AD96EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageProcessingAPI", "ImageProcessingApp\ImageProcessingAPI\ImageProcessingAPI.csproj", "{EAB083A4-2A0F-F859-C0A5-AF43FA48CCD8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2BEAD406-2235-9E1A-3072-2FDD5C3DD0A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BEAD406-2235-9E1A-3072-2FDD5C3DD0A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BEAD406-2235-9E1A-3072-2FDD5C3DD0A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BEAD406-2235-9E1A-3072-2FDD5C3DD0A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAB083A4-2A0F-F859-C0A5-AF43FA48CCD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAB083A4-2A0F-F859-C0A5-AF43FA48CCD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAB083A4-2A0F-F859-C0A5-AF43FA48CCD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAB083A4-2A0F-F859-C0A5-AF43FA48CCD8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EAB083A4-2A0F-F859-C0A5-AF43FA48CCD8} = {295B2A7C-F649-11FD-8C4E-BDFFD1AD96EF}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {215CF0F3-50C7-4DCE-90DA-AC233C88B7CA}
+	EndGlobalSection
+EndGlobal

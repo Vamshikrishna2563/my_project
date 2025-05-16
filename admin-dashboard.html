@@ -1,0 +1,150 @@
+<!-- admin.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 9px;
+            text-align: center;
+            position: relative;
+        }
+        .header h1 {
+            font-size: 22px;
+            margin: 10px 0;
+        }
+        .logout-box {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+        }
+        .logout-button {
+            padding: 10px 15px;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .logout-button:hover {
+            background-color: darkgreen;
+        }
+        table {
+            width: 80%;
+            margin: 30px auto;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Admin Dashboard</h1>
+        <div class="logout-box">
+            <button class="logout-button" onclick="logout()">Log Out</button>
+        </div>
+    </div>
+
+    <h2 style="text-align:center;">All Users</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>State</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="user-list-body">
+            <!-- All Users (Activated & Unactivated) will be populated here -->
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <p>&copy; 2025 Improving the lives of indebted farmers. All rights reserved.</p>
+    </div>
+
+    <script>
+        function loadUsers() {
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const userTableBody = document.getElementById('user-list-body');
+            userTableBody.innerHTML = ''; 
+
+            users.forEach((user, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>${user.phone}</td>
+                    <td>${user.state}</td>
+                    <td>${user.status === "Active" ? "Activated" : "Pending"}</td>
+                    <td>
+                        ${user.status === "Active" 
+                            ? "✅ Activated"
+                            : `<button onclick="activateUser(${index})" id="status-btn-${index}">
+                                Activate
+                              </button>`}
+                    </td>
+                `;
+                userTableBody.appendChild(row);
+            });
+        }
+
+        function activateUser(index) {
+            let users = JSON.parse(localStorage.getItem("users")) || [];
+            let activatedUsers = JSON.parse(localStorage.getItem("activatedUsers")) || [];
+
+            let activatedUser = users[index]; 
+            activatedUser.status = "Active";  
+            activatedUsers.push(activatedUser); 
+
+            localStorage.setItem("activatedUsers", JSON.stringify(activatedUsers)); // Store for farmers.html
+            localStorage.setItem("users", JSON.stringify(users)); // Update all users
+
+            loadUsers(); 
+        }
+
+        document.addEventListener("DOMContentLoaded", loadUsers);
+
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            window.location.href = 'login.html';
+        }
+    </script>
+
+</body>
+</html>

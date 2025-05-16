@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Price Information</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 25px;
+            margin: 5px 0;
+        }
+        .back-button {
+            position: absolute;
+            left: 15px;
+            top: 10px;
+            padding: 8px 12px;
+            background-color: #4CAF50;
+            color: #ffffff;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .back-button:hover {
+            background-color: #ddd;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .controls {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-button" onclick="goBack()">← Back</button>
+        <h1>Crop Price Information</h1>
+    </div>
+    <div class="container">
+        <div class="controls">
+            <input type="file" id="fileInput" accept=".csv" onchange="loadCSV(event)">
+            <select id="yearSelect" onchange="filterData()">
+                <option value="">Select Year</option>
+            </select>
+            <select id="stateSelect" onchange="filterData()">
+                <option value="">Select State</option>
+            </select>
+        </div>
+        <div id="price-info"></div>
+    </div>
+    
+    <div class="footer">
+        <p>&copy; 2025 Improving the lives of indebted farmers. All rights reserved.</p>
+    </div>
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+
+        let cropData = [];
+
+        function loadCSV(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const csvData = e.target.result;
+                    Papa.parse(csvData, {
+                        header: true,
+                        dynamicTyping: true,
+                        complete: function(results) {
+                            cropData = results.data.map(row => {
+                                return {
+                                    Year: row["Year"]?.toString().trim() || '',
+                                    State: row["State"]?.toString().trim() || '',
+                                    Crop: row["Crop"]?.toString().trim() || '',
+                                    MinPrice: parseFloat(row["Min Price"]) || 0,
+                                    MaxPrice: parseFloat(row["Max Price"]) || 0
+                                };
+                            });
+                            console.log("Loaded Data Sample:", cropData[0]);
+                            populateFilters();
+                        }
+                    });
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        function populateFilters() {
+            const years = new Set();
+            const states = new Set();
+
+            cropData.forEach(row => {
+                if (row.Year) years.add(row.Year);
+                if (row.State) states.add(row.State);
+            });
+
+            populateDropdown("yearSelect", years);
+            populateDropdown("stateSelect", states);
+        }
+
+        function populateDropdown(id, values) {
+            const select = document.getElementById(id);
+            select.innerHTML = '<option value="">Select</option>';
+            values.forEach(value => {
+                const option = document.createElement("option");
+                option.value = value;
+                option.textContent = value;
+                select.appendChild(option);
+            });
+        }
+
+        function filterData() {
+            console.log("Crop Data Sample:", cropData[0]);
+
+            const year = document.getElementById("yearSelect").value;
+            const state = document.getElementById("stateSelect").value;
+
+            const filteredData = cropData.filter(row =>
+                (!year || row.Year === year) &&
+                (!state || row.State === state)
+            );
+
+            if (filteredData.length === 0) {
+                console.warn("No matching data found for the selected filters.");
+            }
+
+            displayTable(filteredData);
+        }
+
+        function displayTable(data) {
+            const priceInfoDiv = document.getElementById("price-info");
+            if (data.length === 0) {
+                priceInfoDiv.innerHTML = "<p>No data available for the selected filters.</p>";
+                return;
+            }
+
+            let tableContent = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Year</th>
+                            <th>State</th>
+                            <th>Crop</th>
+                            <th>Min Price </th>
+                            <th>Max Price </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            data.forEach(row => {
+                tableContent += `
+                        <tr>
+                            <td>${row.Year}</td>
+                            <td>${row.State}</td>
+                            <td>${row.Crop}</td>
+                            <td>${row.MinPrice ? row.MinPrice.toFixed(2) : '0.00'}</td>
+                            <td>${row.MaxPrice ? row.MaxPrice.toFixed(2) : '0.00'}</td>
+                        </tr>
+                `;
+            });
+
+            tableContent += "</tbody></table>";
+            priceInfoDiv.innerHTML = tableContent;
+        }
+    </script>
+</body>
+</html>

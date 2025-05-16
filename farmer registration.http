@@ -1,0 +1,6 @@
+@farmer_registration_HostAddress = http://localhost:5122
+
+GET {{farmer_registration_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
